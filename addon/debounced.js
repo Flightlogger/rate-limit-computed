@@ -22,12 +22,12 @@ export default function debouncedProperty() {
   var __onDestroy = false;
   var __isNotifying = false;
 
-  var methodFn = function(key, value, oldValue) {
+  var methodFn = function(key) {
 
     if (!this.get('isDestroyed')) {
       if (!__isNotifying) {
         __isNotifying = true;
-        __value = method.call(this, key, value, oldValue);
+        __value = method.call(this, key);
         if (!this.get('isDestroying')) {
           join(this, this.propertyDidChange, key);
         }
@@ -38,7 +38,7 @@ export default function debouncedProperty() {
 
   };
 
-  args.push(function(key, value, oldValue) {
+  args.push(function(key) {
     if (!__onDestroy) {
       var _super = this.willDestroy;
       this.willDestroy = function() {
@@ -47,7 +47,7 @@ export default function debouncedProperty() {
       };
       __onDestroy = true;
     }
-    __next = debounce(this, methodFn, key, value, oldValue, rate, false);
+    __next = debounce(this, methodFn, key, rate, false);
     return __value;
   });
   return computed.apply(this, args);
